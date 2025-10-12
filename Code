@@ -66,6 +66,21 @@ public class CustomerServiceImpl implements CustomerService {
 }
 
 
+TRANSACTIONS MODULE
+service/TransactionService.java
+package com.sgc.crm.service;
+
+import com.sgc.crm.entity.Transaction;
+import java.util.List;
+
+public interface TransactionService {
+    List<Transaction> getAllTransactions();
+    Transaction getTransactionById(Long id);
+    Transaction saveTransaction(Transaction transaction);
+    Transaction updateTransaction(Long id, Transaction transaction);
+    void deleteTransaction(Long id);
+}
+
 service/impl/TransactionServiceImpl.java
 package com.sgc.crm.service.impl;
 
@@ -114,5 +129,273 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public void deleteTransaction(Long id) {
         repository.deleteById(id);
+    }
+}
+
+controller/TransactionController.java
+package com.sgc.crm.controller;
+
+import com.sgc.crm.entity.Transaction;
+import com.sgc.crm.service.TransactionService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/transactions")
+public class TransactionController {
+
+    private final TransactionService service;
+
+    public TransactionController(TransactionService service) {
+        this.service = service;
+    }
+
+    @GetMapping
+    public List<Transaction> getAll() {
+        return service.getAllTransactions();
+    }
+
+    @GetMapping("/{id}")
+    public Transaction getById(@PathVariable Long id) {
+        return service.getTransactionById(id);
+    }
+
+    @PostMapping
+    public Transaction create(@RequestBody Transaction transaction) {
+        return service.saveTransaction(transaction);
+    }
+
+    @PutMapping("/{id}")
+    public Transaction update(@PathVariable Long id, @RequestBody Transaction transaction) {
+        return service.updateTransaction(id, transaction);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.deleteTransaction(id);
+    }
+}
+
+🧩 INTERACTIONS MODULE
+service/InteractionService.java
+package com.sgc.crm.service;
+
+import com.sgc.crm.entity.Interaction;
+import java.util.List;
+
+public interface InteractionService {
+    List<Interaction> getAllInteractions();
+    Interaction getInteractionById(Long id);
+    Interaction saveInteraction(Interaction interaction);
+    Interaction updateInteraction(Long id, Interaction interaction);
+    void deleteInteraction(Long id);
+}
+
+service/impl/InteractionServiceImpl.java
+package com.sgc.crm.service.impl;
+
+import com.sgc.crm.entity.Interaction;
+import com.sgc.crm.exception.ResourceNotFoundException;
+import com.sgc.crm.repository.InteractionRepository;
+import com.sgc.crm.service.InteractionService;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class InteractionServiceImpl implements InteractionService {
+
+    private final InteractionRepository repository;
+
+    public InteractionServiceImpl(InteractionRepository repository) {
+        this.repository = repository;
+    }
+
+    @Override
+    public List<Interaction> getAllInteractions() {
+        return repository.findAll();
+    }
+
+    @Override
+    public Interaction getInteractionById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Interaction not found with id: " + id));
+    }
+
+    @Override
+    public Interaction saveInteraction(Interaction interaction) {
+        return repository.save(interaction);
+    }
+
+    @Override
+    public Interaction updateInteraction(Long id, Interaction updated) {
+        Interaction existing = getInteractionById(id);
+        existing.setChannel(updated.getChannel());
+        existing.setNotes(updated.getNotes());
+        existing.setTimestamp(updated.getTimestamp());
+        return repository.save(existing);
+    }
+
+    @Override
+    public void deleteInteraction(Long id) {
+        repository.deleteById(id);
+    }
+}
+
+controller/InteractionController.java
+package com.sgc.crm.controller;
+
+import com.sgc.crm.entity.Interaction;
+import com.sgc.crm.service.InteractionService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/interactions")
+public class InteractionController {
+
+    private final InteractionService service;
+
+    public InteractionController(InteractionService service) {
+        this.service = service;
+    }
+
+    @GetMapping
+    public List<Interaction> getAll() {
+        return service.getAllInteractions();
+    }
+
+    @GetMapping("/{id}")
+    public Interaction getById(@PathVariable Long id) {
+        return service.getInteractionById(id);
+    }
+
+    @PostMapping
+    public Interaction create(@RequestBody Interaction interaction) {
+        return service.saveInteraction(interaction);
+    }
+
+    @PutMapping("/{id}")
+    public Interaction update(@PathVariable Long id, @RequestBody Interaction interaction) {
+        return service.updateInteraction(id, interaction);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.deleteInteraction(id);
+    }
+}
+
+🧩 TASKS MODULE
+service/TaskService.java
+package com.sgc.crm.service;
+
+import com.sgc.crm.entity.Task;
+import java.util.List;
+
+public interface TaskService {
+    List<Task> getAllTasks();
+    Task getTaskById(Long id);
+    Task saveTask(Task task);
+    Task updateTask(Long id, Task task);
+    void deleteTask(Long id);
+}
+
+service/impl/TaskServiceImpl.java
+package com.sgc.crm.service.impl;
+
+import com.sgc.crm.entity.Task;
+import com.sgc.crm.exception.ResourceNotFoundException;
+import com.sgc.crm.repository.TaskRepository;
+import com.sgc.crm.service.TaskService;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class TaskServiceImpl implements TaskService {
+
+    private final TaskRepository repository;
+
+    public TaskServiceImpl(TaskRepository repository) {
+        this.repository = repository;
+    }
+
+    @Override
+    public List<Task> getAllTasks() {
+        return repository.findAll();
+    }
+
+    @Override
+    public Task getTaskById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
+    }
+
+    @Override
+    public Task saveTask(Task task) {
+        return repository.save(task);
+    }
+
+    @Override
+    public Task updateTask(Long id, Task updated) {
+        Task existing = getTaskById(id);
+        existing.setTitle(updated.getTitle());
+        existing.setDescription(updated.getDescription());
+        existing.setStatus(updated.getStatus());
+        existing.setDueDate(updated.getDueDate());
+        return repository.save(existing);
+    }
+
+    @Override
+    public void deleteTask(Long id) {
+        repository.deleteById(id);
+    }
+}
+
+controller/TaskController.java
+package com.sgc.crm.controller;
+
+import com.sgc.crm.entity.Task;
+import com.sgc.crm.service.TaskService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/tasks")
+public class TaskController {
+
+    private final TaskService service;
+
+    public TaskController(TaskService service) {
+        this.service = service;
+    }
+
+    @GetMapping
+    public List<Task> getAll() {
+        return service.getAllTasks();
+    }
+
+    @GetMapping("/{id}")
+    public Task getById(@PathVariable Long id) {
+        return service.getTaskById(id);
+    }
+
+    @PostMapping
+    public Task create(@RequestBody Task task) {
+        return service.saveTask(task);
+    }
+
+    @PutMapping("/{id}")
+    public Task update(@PathVariable Long id, @RequestBody Task task) {
+        return service.updateTask(id, task);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.deleteTask(id);
     }
 }
