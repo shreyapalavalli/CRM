@@ -509,3 +509,48 @@ public class DataLoader {
         }
     }
 }
+
+
+🧩 1️⃣ CustomerRepository.java
+package com.sgc.crm.repository;
+
+import com.sgc.crm.entity.Customer;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface CustomerRepository extends JpaRepository<Customer, Long> {
+}
+
+🧩 2️⃣ TransactionRepository.java
+package com.sgc.crm.repository;
+
+import com.sgc.crm.entity.Transaction;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface TransactionRepository extends JpaRepository<Transaction, Long> {
+}
+
+🧩 3️⃣ InteractionRepository.java
+package com.sgc.crm.repository;
+
+import com.sgc.crm.entity.Interaction;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface InteractionRepository extends JpaRepository<Interaction, Long> {
+}
+
+🧩 4️⃣ TaskRepository.java
+package com.sgc.crm.repository;
+
+import com.sgc.crm.entity.Task;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface TaskRepository extends JpaRepository<Task, Long> {
+}
