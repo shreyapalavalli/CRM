@@ -554,3 +554,78 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
 }
+
+
+CREATE TABLE customers (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    city VARCHAR(100),
+    status VARCHAR(50),
+    balance NUMERIC(15, 2)
+);
+
+CREATE TABLE transactions (
+    id SERIAL PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(id) ON DELETE CASCADE,
+    type VARCHAR(50) NOT NULL,
+    amount NUMERIC(15, 2) NOT NULL,
+    date DATE NOT NULL
+);
+
+CREATE TABLE interactions (
+    id SERIAL PRIMARY KEY,
+    customer_id INTEGER REFERENCES customers(id) ON DELETE CASCADE,
+    type VARCHAR(50),
+    notes TEXT,
+    date DATE
+);
+
+CREATE TABLE tasks (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    status VARCHAR(50),
+    assigned_to VARCHAR(100)
+);
+
+-- ==============================================
+-- ✅ SAMPLE DATA FOR SGC BANK CRM SYSTEM
+-- ==============================================
+
+-- 1️⃣ Customers
+INSERT INTO customers (name, email, city, status, balance)
+VALUES 
+('John Doe', 'john.doe@sgcbank.com', 'New York', 'Active', 8500.00),
+('Emma Watson', 'emma.watson@sgcbank.com', 'Los Angeles', 'Active', 12000.00),
+('Michael Brown', 'michael.brown@sgcbank.com', 'Chicago', 'Inactive', 4300.50),
+('Sophia Patel', 'sophia.patel@sgcbank.com', 'Houston', 'Active', 9200.75),
+('Liam Smith', 'liam.smith@sgcbank.com', 'San Francisco', 'Active', 15200.00);
+
+-- 2️⃣ Transactions
+INSERT INTO transactions (customer_id, type, amount, date)
+VALUES
+(1, 'Deposit', 1500.00, '2025-10-01'),
+(1, 'Withdrawal', 500.00, '2025-10-03'),
+(2, 'Deposit', 2000.00, '2025-09-30'),
+(3, 'Deposit', 800.00, '2025-10-02'),
+(4, 'Withdrawal', 1000.00, '2025-10-04'),
+(5, 'Deposit', 3000.00, '2025-10-05');
+
+-- 3️⃣ Interactions
+INSERT INTO interactions (customer_id, type, notes, date)
+VALUES
+(1, 'Call', 'Discussed new savings plan', '2025-10-06'),
+(2, 'Email', 'Sent credit card offer', '2025-10-05'),
+(3, 'Meeting', 'KYC verification pending', '2025-10-04'),
+(4, 'Call', 'Follow-up on loan inquiry', '2025-10-07'),
+(5, 'Email', 'Sent promotional mailer', '2025-10-08');
+
+-- 4️⃣ Tasks
+INSERT INTO tasks (title, status, assigned_to)
+VALUES
+('Follow-up with John Doe', 'Pending', 'Rachel'),
+('Verify Emma Watson KYC', 'In Progress', 'David'),
+('Send credit offer to Michael Brown', 'Completed', 'Ava'),
+('Call Sophia Patel about loan', 'Pending', 'Liam'),
+('Schedule meeting with Liam Smith', 'Pending', 'Noah');
+
