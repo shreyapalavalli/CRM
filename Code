@@ -629,3 +629,39 @@ VALUES
 ('Call Sophia Patel about loan', 'Pending', 'Liam'),
 ('Schedule meeting with Liam Smith', 'Pending', 'Noah');
 
+
+src/main/java/com/sgc/crm/config/SecurityConfig.java
+
+package com.sgc.crm.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+public class SecurityConfig {
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf().disable() // disable CSRF for simplicity in dev
+            .authorizeHttpRequests(auth -> auth
+                // allow Swagger UI and OpenAPI endpoints
+                .requestMatchers(
+                    "/swagger-ui/**",
+                    "/v3/api-docs/**",
+                    "/v3/api-docs.yaml"
+                ).permitAll()
+                // allow your API endpoints (if you want)
+                .requestMatchers("/api/**").permitAll()
+                // everything else requires authentication
+                .anyRequest().authenticated()
+            )
+            // disable login form for testing
+            .formLogin().disable()
+            .httpBasic().disable();
+
+        return http.build();
+    }
+}
