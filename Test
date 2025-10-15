@@ -87,18 +87,15 @@ class CustomerServiceTest {
     }
 }
 
-
-1️⃣ TransactionServiceTest.java
+✅ TransactionServiceTest.java (matching your style)
 package com.sgc.crm.service;
 
 import com.sgc.crm.entity.Transaction;
+import com.sgc.crm.exception.ResourceNotFoundException;
 import com.sgc.crm.repository.TransactionRepository;
 import com.sgc.crm.service.impl.TransactionServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -110,45 +107,49 @@ import static org.mockito.Mockito.*;
 
 class TransactionServiceTest {
 
-    @Mock
     private TransactionRepository repository;
-
-    @InjectMocks
-    private TransactionServiceImpl service;
-
-    private Transaction transaction;
+    private TransactionService service;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-        transaction = new Transaction();
-        transaction.setId(1L);
-        transaction.setAmount(1500.0);
-        transaction.setDate(LocalDate.now());
-        transaction.setDescription("Test Transaction");
+        repository = mock(TransactionRepository.class);
+        service = new TransactionServiceImpl(repository);
     }
 
     @Test
     void testGetAllTransactions() {
-        when(repository.findAll()).thenReturn(Arrays.asList(transaction));
+        Transaction t1 = new Transaction(1L, 1000.0, LocalDate.now(), "Payment received");
+        Transaction t2 = new Transaction(2L, 2500.0, LocalDate.now(), "Invoice sent");
+        when(repository.findAll()).thenReturn(Arrays.asList(t1, t2));
+
         List<Transaction> result = service.getAllTransactions();
-        assertEquals(1, result.size());
+        assertEquals(2, result.size());
         verify(repository, times(1)).findAll();
     }
 
     @Test
-    void testGetTransactionById() {
-        when(repository.findById(1L)).thenReturn(Optional.of(transaction));
-        Transaction result = service.getTransactionById(1L);
-        assertEquals(1500.0, result.getAmount());
+    void testGetTransactionById_Success() {
+        Transaction t = new Transaction(1L, 1500.0, LocalDate.now(), "Refund");
+        when(repository.findById(1L)).thenReturn(Optional.of(t));
+
+        Transaction found = service.getTransactionById(1L);
+        assertEquals(1500.0, found.getAmount());
+    }
+
+    @Test
+    void testGetTransactionById_NotFound() {
+        when(repository.findById(1L)).thenReturn(Optional.empty());
+        assertThrows(ResourceNotFoundException.class, () -> service.getTransactionById(1L));
     }
 
     @Test
     void testSaveTransaction() {
-        when(repository.save(any(Transaction.class))).thenReturn(transaction);
-        Transaction saved = service.saveTransaction(transaction);
-        assertNotNull(saved);
-        verify(repository, times(1)).save(transaction);
+        Transaction t = new Transaction(null, 2200.0, LocalDate.now(), "New transaction");
+        when(repository.save(t)).thenReturn(new Transaction(3L, 2200.0, LocalDate.now(), "New transaction"));
+
+        Transaction saved = service.saveTransaction(t);
+        assertNotNull(saved.getId());
+        assertEquals(2200.0, saved.getAmount());
     }
 
     @Test
@@ -159,17 +160,15 @@ class TransactionServiceTest {
     }
 }
 
-✅ 2️⃣ InteractionServiceTest.java
+✅ InteractionServiceTest.java
 package com.sgc.crm.service;
 
 import com.sgc.crm.entity.Interaction;
+import com.sgc.crm.exception.ResourceNotFoundException;
 import com.sgc.crm.repository.InteractionRepository;
 import com.sgc.crm.service.impl.InteractionServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -181,45 +180,49 @@ import static org.mockito.Mockito.*;
 
 class InteractionServiceTest {
 
-    @Mock
     private InteractionRepository repository;
-
-    @InjectMocks
-    private InteractionServiceImpl service;
-
-    private Interaction interaction;
+    private InteractionService service;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-        interaction = new Interaction();
-        interaction.setId(1L);
-        interaction.setDate(LocalDate.now());
-        interaction.setType("Email");
-        interaction.setNotes("Follow-up email sent");
+        repository = mock(InteractionRepository.class);
+        service = new InteractionServiceImpl(repository);
     }
 
     @Test
     void testGetAllInteractions() {
-        when(repository.findAll()).thenReturn(Arrays.asList(interaction));
+        Interaction i1 = new Interaction(1L, LocalDate.now(), "Email", "Follow-up mail sent");
+        Interaction i2 = new Interaction(2L, LocalDate.now(), "Call", "Spoke with client");
+        when(repository.findAll()).thenReturn(Arrays.asList(i1, i2));
+
         List<Interaction> result = service.getAllInteractions();
-        assertEquals(1, result.size());
+        assertEquals(2, result.size());
         verify(repository, times(1)).findAll();
     }
 
     @Test
-    void testGetInteractionById() {
-        when(repository.findById(1L)).thenReturn(Optional.of(interaction));
-        Interaction result = service.getInteractionById(1L);
-        assertEquals("Email", result.getType());
+    void testGetInteractionById_Success() {
+        Interaction i = new Interaction(1L, LocalDate.now(), "Meeting", "In-person discussion");
+        when(repository.findById(1L)).thenReturn(Optional.of(i));
+
+        Interaction found = service.getInteractionById(1L);
+        assertEquals("Meeting", found.getType());
+    }
+
+    @Test
+    void testGetInteractionById_NotFound() {
+        when(repository.findById(1L)).thenReturn(Optional.empty());
+        assertThrows(ResourceNotFoundException.class, () -> service.getInteractionById(1L));
     }
 
     @Test
     void testSaveInteraction() {
-        when(repository.save(any(Interaction.class))).thenReturn(interaction);
-        Interaction saved = service.saveInteraction(interaction);
-        assertNotNull(saved);
-        verify(repository, times(1)).save(interaction);
+        Interaction i = new Interaction(null, LocalDate.now(), "Email", "Test message");
+        when(repository.save(i)).thenReturn(new Interaction(3L, LocalDate.now(), "Email", "Test message"));
+
+        Interaction saved = service.saveInteraction(i);
+        assertNotNull(saved.getId());
+        assertEquals("Email", saved.getType());
     }
 
     @Test
@@ -230,17 +233,15 @@ class InteractionServiceTest {
     }
 }
 
-✅ 3️⃣ TaskServiceTest.java
+✅ TaskServiceTest.java
 package com.sgc.crm.service;
 
 import com.sgc.crm.entity.Task;
+import com.sgc.crm.exception.ResourceNotFoundException;
 import com.sgc.crm.repository.TaskRepository;
 import com.sgc.crm.service.impl.TaskServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -252,45 +253,49 @@ import static org.mockito.Mockito.*;
 
 class TaskServiceTest {
 
-    @Mock
     private TaskRepository repository;
-
-    @InjectMocks
-    private TaskServiceImpl service;
-
-    private Task task;
+    private TaskService service;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-        task = new Task();
-        task.setId(1L);
-        task.setTitle("Follow-up Call");
-        task.setDueDate(LocalDate.now().plusDays(2));
-        task.setStatus("Pending");
+        repository = mock(TaskRepository.class);
+        service = new TaskServiceImpl(repository);
     }
 
     @Test
     void testGetAllTasks() {
-        when(repository.findAll()).thenReturn(Arrays.asList(task));
+        Task t1 = new Task(1L, "Follow-up call", LocalDate.now().plusDays(1), "Pending");
+        Task t2 = new Task(2L, "Send email", LocalDate.now().plusDays(2), "Completed");
+        when(repository.findAll()).thenReturn(Arrays.asList(t1, t2));
+
         List<Task> result = service.getAllTasks();
-        assertEquals(1, result.size());
+        assertEquals(2, result.size());
         verify(repository, times(1)).findAll();
     }
 
     @Test
-    void testGetTaskById() {
-        when(repository.findById(1L)).thenReturn(Optional.of(task));
-        Task result = service.getTaskById(1L);
-        assertEquals("Follow-up Call", result.getTitle());
+    void testGetTaskById_Success() {
+        Task t = new Task(1L, "Follow-up call", LocalDate.now(), "Pending");
+        when(repository.findById(1L)).thenReturn(Optional.of(t));
+
+        Task found = service.getTaskById(1L);
+        assertEquals("Follow-up call", found.getTitle());
+    }
+
+    @Test
+    void testGetTaskById_NotFound() {
+        when(repository.findById(1L)).thenReturn(Optional.empty());
+        assertThrows(ResourceNotFoundException.class, () -> service.getTaskById(1L));
     }
 
     @Test
     void testSaveTask() {
-        when(repository.save(any(Task.class))).thenReturn(task);
-        Task saved = service.saveTask(task);
-        assertNotNull(saved);
-        verify(repository, times(1)).save(task);
+        Task t = new Task(null, "New task", LocalDate.now(), "In Progress");
+        when(repository.save(t)).thenReturn(new Task(3L, "New task", LocalDate.now(), "In Progress"));
+
+        Task saved = service.saveTask(t);
+        assertNotNull(saved.getId());
+        assertEquals("New task", saved.getTitle());
     }
 
     @Test
