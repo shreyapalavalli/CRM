@@ -1,0 +1,612 @@
+index.html
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>SGC CRM — Simple Frontend</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <header>
+    <h1>SGC CRM</h1>
+    <nav>
+      <button class="tab-btn" data-target="customers-section">Customers</button>
+      <button class="tab-btn" data-target="transactions-section">Transactions</button>
+      <button class="tab-btn" data-target="interactions-section">Interactions</button>
+      <button class="tab-btn" data-target="tasks-section">Tasks</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="messages"></section>
+
+    <!-- Customers -->
+    <section id="customers-section" class="tab-section">
+      <h2>Customers</h2>
+
+      <form id="customer-form" class="entity-form">
+        <input type="hidden" id="customer-id" />
+        <div class="row">
+          <input id="customer-name" placeholder="Name" required />
+          <input id="customer-email" type="email" placeholder="Email" required />
+          <input id="customer-city" placeholder="City" />
+          <input id="customer-status" placeholder="Status" />
+          <input id="customer-balance" type="number" step="0.01" placeholder="Balance" />
+        </div>
+        <div class="row">
+          <button id="customer-save">Save</button>
+          <button id="customer-clear" type="button">Clear</button>
+        </div>
+      </form>
+
+      <table class="entity-table" id="customer-table">
+        <thead>
+          <tr><th>ID</th><th>Name</th><th>Email</th><th>City</th><th>Status</th><th>Balance</th><th>Actions</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- Transactions -->
+    <section id="transactions-section" class="tab-section" hidden>
+      <h2>Transactions</h2>
+
+      <form id="transaction-form" class="entity-form">
+        <input type="hidden" id="transaction-id" />
+        <div class="row">
+          <select id="transaction-customerId" required></select>
+          <input id="transaction-type" placeholder="Type (Deposit/Withdrawal)" required />
+          <input id="transaction-amount" type="number" step="0.01" placeholder="Amount" required />
+          <input id="transaction-date" type="date" required />
+        </div>
+        <div class="row">
+          <button id="transaction-save">Save</button>
+          <button id="transaction-clear" type="button">Clear</button>
+        </div>
+      </form>
+
+      <table class="entity-table" id="transaction-table">
+        <thead>
+          <tr><th>ID</th><th>Customer ID</th><th>Type</th><th>Amount</th><th>Date</th><th>Actions</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- Interactions -->
+    <section id="interactions-section" class="tab-section" hidden>
+      <h2>Interactions</h2>
+
+      <form id="interaction-form" class="entity-form">
+        <input type="hidden" id="interaction-id" />
+        <div class="row">
+          <select id="interaction-customerId" required></select>
+          <input id="interaction-type" placeholder="Type (Call/Email/Meeting)" required />
+          <input id="interaction-date" type="date" required />
+        </div>
+        <div class="row">
+          <input id="interaction-notes" placeholder="Notes" />
+        </div>
+        <div class="row">
+          <button id="interaction-save">Save</button>
+          <button id="interaction-clear" type="button">Clear</button>
+        </div>
+      </form>
+
+      <table class="entity-table" id="interaction-table">
+        <thead>
+          <tr><th>ID</th><th>Customer ID</th><th>Type</th><th>Date</th><th>Notes</th><th>Actions</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- Tasks -->
+    <section id="tasks-section" class="tab-section" hidden>
+      <h2>Tasks</h2>
+
+      <form id="task-form" class="entity-form">
+        <input type="hidden" id="task-id" />
+        <div class="row">
+          <input id="task-title" placeholder="Title" required />
+          <input id="task-status" placeholder="Status (Pending/Completed/In Progress)" />
+          <input id="task-assignedTo" placeholder="Assigned To" />
+        </div>
+        <div class="row">
+          <button id="task-save">Save</button>
+          <button id="task-clear" type="button">Clear</button>
+        </div>
+      </form>
+
+      <table class="entity-table" id="task-table">
+        <thead>
+          <tr><th>ID</th><th>Title</th><th>Status</th><th>Assigned To</th><th>Actions</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    <small>SGC CRM — simple frontend • Backend API: /api/*</small>
+  </footer>
+
+  <script src="/js/script.js"></script>
+</body>
+</html>
+
+
+style.css
+:root{
+  --accent:#2b7a78;
+  --muted:#666;
+  --bg:#f8f9fb;
+  --card:#fff;
+}
+*{box-sizing:border-box}
+body{
+  font-family: Inter, Arial, sans-serif;
+  margin:0;
+  background:var(--bg);
+  color:#222;
+}
+header{
+  background:var(--accent);
+  color:white;
+  padding:16px;
+  display:flex;
+  align-items:center;
+  gap:24px;
+}
+header h1{margin:0;font-size:20px}
+nav{margin-left:auto}
+nav .tab-btn{
+  background:transparent;color:white;border:1px solid rgba(255,255,255,0.15);
+  padding:8px 12px;margin-left:8px;border-radius:6px;cursor:pointer;
+}
+main{padding:20px;max-width:1100px;margin:0 auto}
+.tab-section{background:var(--card);padding:16px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.04);margin-bottom:20px}
+.entity-form .row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.entity-form input,.entity-form select{padding:8px;border:1px solid #ddd;border-radius:6px;min-width:120px}
+.entity-form button{padding:8px 12px;border-radius:6px;border:none;background:var(--accent);color:white;cursor:pointer}
+.entity-table{width:100%;border-collapse:collapse;margin-top:12px}
+.entity-table th,.entity-table td{padding:8px;border:1px solid #eee;text-align:left}
+.entity-table tbody tr:nth-child(even){background:#fafafa}
+button.action-btn{padding:6px 8px;margin-right:6px;border-radius:4px;border:1px solid #ddd;background:white;cursor:pointer}
+button.edit{background:#fef3c7}
+button.delete{background:#ffdede}
+#messages{margin-bottom:12px}
+.message{padding:8px;border-radius:6px;margin-bottom:6px}
+.message.success{background:#e6fffa;border:1px solid #bdeede}
+.message.error{background:#ffe6e6;border:1px solid #ffbebe}
+footer{padding:12px;text-align:center;color:var(--muted);font-size:13px}
+
+script.js
+// ---------------- Config ----------------
+const API_BASE = "/api";
+const CUSTOMER_API = `${API_BASE}/customers`;
+const TRANSACTION_API = `${API_BASE}/transactions`;
+const INTERACTION_API = `${API_BASE}/interactions`;
+const TASK_API = `${API_BASE}/tasks`;
+
+// ---------------- Utilities ----------------
+function showMessage(text, type='success', timeout=3500){
+  const container = document.getElementById('messages');
+  const msg = document.createElement('div');
+  msg.className = `message ${type==='success'?'success':'error'}`;
+  msg.textContent = text;
+  container.appendChild(msg);
+  setTimeout(()=> msg.remove(), timeout);
+}
+
+async function request(url, options = {}){
+  try {
+    const res = await fetch(url, {...options, headers: {...(options.headers||{}), 'Content-Type':'application/json'}});
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`${res.status} ${res.statusText} ${text ? '- '+text : ''}`);
+    }
+    if (res.status === 204) return null;
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    throw err;
+  }
+}
+
+// ---------------- Tabs ----------------
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=> {
+    const target = btn.dataset.target;
+    document.querySelectorAll('.tab-section').forEach(s => s.hidden = s.id !== target);
+  });
+});
+
+// ---------------- Customers ----------------
+async function loadCustomers(){
+  try {
+    const customers = await request(CUSTOMER_API);
+    const tbody = document.querySelector('#customer-table tbody');
+    tbody.innerHTML = '';
+    customers.forEach(c => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${c.id}</td>
+        <td>${escapeHtml(c.name)}</td>
+        <td>${escapeHtml(c.email)}</td>
+        <td>${escapeHtml(c.city||'')}</td>
+        <td>${escapeHtml(c.status||'')}</td>
+        <td>${c.balance!=null?c.balance.toFixed(2):''}</td>
+        <td>
+          <button class="action-btn edit" onclick="editCustomer(${c.id})">Edit</button>
+          <button class="action-btn delete" onclick="deleteCustomer(${c.id})">Delete</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+    populateCustomerSelectors(customers);
+  } catch (err) {
+    showMessage('Error loading customers: '+err.message, 'error');
+  }
+}
+
+function escapeHtml(s){
+  if (s == null) return '';
+  return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+document.getElementById('customer-form').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const id = document.getElementById('customer-id').value;
+  const payload = {
+    name: document.getElementById('customer-name').value.trim(),
+    email: document.getElementById('customer-email').value.trim(),
+    city: document.getElementById('customer-city').value.trim(),
+    status: document.getElementById('customer-status').value.trim(),
+    balance: parseFloat(document.getElementById('customer-balance').value || 0)
+  };
+  try {
+    if (!payload.name || !payload.email) { showMessage('Name and email are required','error'); return; }
+    let res;
+    if (id) {
+      res = await request(`${CUSTOMER_API}/${id}`, {method:'PUT', body: JSON.stringify(payload)});
+      showMessage('Customer updated');
+    } else {
+      res = await request(CUSTOMER_API, {method:'POST', body: JSON.stringify(payload)});
+      showMessage('Customer created');
+    }
+    clearCustomerForm();
+    await loadCustomers();
+  } catch (err) {
+    showMessage('Error saving customer: '+err.message, 'error');
+  }
+});
+
+document.getElementById('customer-clear').addEventListener('click', clearCustomerForm);
+
+function clearCustomerForm(){
+  document.getElementById('customer-id').value='';
+  document.getElementById('customer-name').value='';
+  document.getElementById('customer-email').value='';
+  document.getElementById('customer-city').value='';
+  document.getElementById('customer-status').value='';
+  document.getElementById('customer-balance').value='';
+}
+
+async function editCustomer(id){
+  try {
+    const c = await request(`${CUSTOMER_API}/${id}`);
+    document.getElementById('customer-id').value = c.id;
+    document.getElementById('customer-name').value = c.name || '';
+    document.getElementById('customer-email').value = c.email || '';
+    document.getElementById('customer-city').value = c.city || '';
+    document.getElementById('customer-status').value = c.status || '';
+    document.getElementById('customer-balance').value = c.balance != null ? c.balance : '';
+    // switch to customers tab
+    document.querySelector('.tab-btn[data-target="customers-section"]').click();
+  } catch (err) {
+    showMessage('Error fetching customer: '+err.message, 'error');
+  }
+}
+
+async function deleteCustomer(id){
+  if (!confirm('Delete customer id='+id+' ?')) return;
+  try {
+    await request(`${CUSTOMER_API}/${id}`, {method:'DELETE'});
+    showMessage('Customer deleted');
+    await loadCustomers();
+    await loadTransactions(); // refresh related grids
+    await loadInteractions();
+  } catch (err) {
+    showMessage('Error deleting customer: '+err.message, 'error');
+  }
+}
+
+// ---------------- Transactions ----------------
+async function loadTransactions(){
+  try {
+    const list = await request(TRANSACTION_API);
+    const tbody = document.querySelector('#transaction-table tbody');
+    tbody.innerHTML = '';
+    list.forEach(t => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${t.id}</td>
+        <td>${t.customerId!=null?t.customerId:''}</td>
+        <td>${escapeHtml(t.type)}</td>
+        <td>${t.amount!=null?Number(t.amount).toFixed(2):''}</td>
+        <td>${t.date||''}</td>
+        <td>
+          <button class="action-btn edit" onclick="editTransaction(${t.id})">Edit</button>
+          <button class="action-btn delete" onclick="deleteTransaction(${t.id})">Delete</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    showMessage('Error loading transactions: '+err.message, 'error');
+  }
+}
+
+document.getElementById('transaction-form').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const id = document.getElementById('transaction-id').value;
+  const payload = {
+    customerId: parseInt(document.getElementById('transaction-customerId').value),
+    type: document.getElementById('transaction-type').value.trim(),
+    amount: parseFloat(document.getElementById('transaction-amount').value),
+    date: document.getElementById('transaction-date').value
+  };
+  try {
+    if (!payload.customerId || !payload.type || isNaN(payload.amount) || !payload.date) { showMessage('All fields are required','error'); return; }
+    if (id) {
+      await request(`${TRANSACTION_API}/${id}`, {method:'PUT', body: JSON.stringify(payload)});
+      showMessage('Transaction updated');
+    } else {
+      await request(TRANSACTION_API, {method:'POST', body: JSON.stringify(payload)});
+      showMessage('Transaction created');
+    }
+    clearTransactionForm();
+    await loadTransactions();
+  } catch (err) {
+    showMessage('Error saving transaction: '+err.message, 'error');
+  }
+});
+
+document.getElementById('transaction-clear').addEventListener('click', clearTransactionForm);
+
+function clearTransactionForm(){
+  document.getElementById('transaction-id').value='';
+  document.getElementById('transaction-customerId').value='';
+  document.getElementById('transaction-type').value='';
+  document.getElementById('transaction-amount').value='';
+  document.getElementById('transaction-date').value='';
+}
+
+async function editTransaction(id){
+  try {
+    const t = await request(`${TRANSACTION_API}/${id}`);
+    document.getElementById('transaction-id').value = t.id;
+    document.getElementById('transaction-customerId').value = t.customerId || '';
+    document.getElementById('transaction-type').value = t.type || '';
+    document.getElementById('transaction-amount').value = t.amount != null ? t.amount : '';
+    document.getElementById('transaction-date').value = t.date || '';
+    document.querySelector('.tab-btn[data-target="transactions-section"]').click();
+  } catch (err) {
+    showMessage('Error fetching transaction: '+err.message, 'error');
+  }
+}
+
+async function deleteTransaction(id){
+  if (!confirm('Delete transaction id='+id+' ?')) return;
+  try {
+    await request(`${TRANSACTION_API}/${id}`, {method:'DELETE'});
+    showMessage('Transaction deleted');
+    await loadTransactions();
+  } catch (err) {
+    showMessage('Error deleting transaction: '+err.message, 'error');
+  }
+}
+
+// ---------------- Interactions ----------------
+async function loadInteractions(){
+  try {
+    const list = await request(INTERACTION_API);
+    const tbody = document.querySelector('#interaction-table tbody');
+    tbody.innerHTML = '';
+    list.forEach(i => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${i.id}</td>
+        <td>${i.customerId!=null?i.customerId:''}</td>
+        <td>${escapeHtml(i.type)}</td>
+        <td>${i.date||''}</td>
+        <td>${escapeHtml(i.notes||'')}</td>
+        <td>
+          <button class="action-btn edit" onclick="editInteraction(${i.id})">Edit</button>
+          <button class="action-btn delete" onclick="deleteInteraction(${i.id})">Delete</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    showMessage('Error loading interactions: '+err.message, 'error');
+  }
+}
+
+document.getElementById('interaction-form').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const id = document.getElementById('interaction-id').value;
+  const payload = {
+    customerId: parseInt(document.getElementById('interaction-customerId').value),
+    type: document.getElementById('interaction-type').value.trim(),
+    notes: document.getElementById('interaction-notes').value.trim(),
+    date: document.getElementById('interaction-date').value
+  };
+  try {
+    if (!payload.customerId || !payload.type || !payload.date) { showMessage('Customer, type and date required','error'); return; }
+    if (id) {
+      await request(`${INTERACTION_API}/${id}`, {method:'PUT', body: JSON.stringify(payload)});
+      showMessage('Interaction updated');
+    } else {
+      await request(INTERACTION_API, {method:'POST', body: JSON.stringify(payload)});
+      showMessage('Interaction created');
+    }
+    clearInteractionForm();
+    await loadInteractions();
+  } catch (err) {
+    showMessage('Error saving interaction: '+err.message, 'error');
+  }
+});
+
+document.getElementById('interaction-clear').addEventListener('click', clearInteractionForm);
+
+function clearInteractionForm(){
+  document.getElementById('interaction-id').value='';
+  document.getElementById('interaction-customerId').value='';
+  document.getElementById('interaction-type').value='';
+  document.getElementById('interaction-date').value='';
+  document.getElementById('interaction-notes').value='';
+}
+
+async function editInteraction(id){
+  try {
+    const i = await request(`${INTERACTION_API}/${id}`);
+    document.getElementById('interaction-id').value = i.id;
+    document.getElementById('interaction-customerId').value = i.customerId || '';
+    document.getElementById('interaction-type').value = i.type || '';
+    document.getElementById('interaction-date').value = i.date || '';
+    document.getElementById('interaction-notes').value = i.notes || '';
+    document.querySelector('.tab-btn[data-target="interactions-section"]').click();
+  } catch (err) {
+    showMessage('Error fetching interaction: '+err.message, 'error');
+  }
+}
+
+async function deleteInteraction(id){
+  if (!confirm('Delete interaction id='+id+' ?')) return;
+  try {
+    await request(`${INTERACTION_API}/${id}`, {method:'DELETE'});
+    showMessage('Interaction deleted');
+    await loadInteractions();
+  } catch (err) {
+    showMessage('Error deleting interaction: '+err.message, 'error');
+  }
+}
+
+// ---------------- Tasks ----------------
+async function loadTasks(){
+  try {
+    const list = await request(TASK_API);
+    const tbody = document.querySelector('#task-table tbody');
+    tbody.innerHTML = '';
+    list.forEach(t => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${t.id}</td>
+        <td>${escapeHtml(t.title)}</td>
+        <td>${escapeHtml(t.status||'')}</td>
+        <td>${escapeHtml(t.assignedTo||'')}</td>
+        <td>
+          <button class="action-btn edit" onclick="editTask(${t.id})">Edit</button>
+          <button class="action-btn delete" onclick="deleteTask(${t.id})">Delete</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    showMessage('Error loading tasks: '+err.message, 'error');
+  }
+}
+
+document.getElementById('task-form').addEventListener('submit', async e=>{
+  e.preventDefault();
+  const id = document.getElementById('task-id').value;
+  const payload = {
+    title: document.getElementById('task-title').value.trim(),
+    status: document.getElementById('task-status').value.trim(),
+    assignedTo: document.getElementById('task-assignedTo').value.trim()
+  };
+  try {
+    if (!payload.title) { showMessage('Title required','error'); return; }
+    if (id) {
+      await request(`${TASK_API}/${id}`, {method:'PUT', body: JSON.stringify(payload)});
+      showMessage('Task updated');
+    } else {
+      await request(TASK_API, {method:'POST', body: JSON.stringify(payload)});
+      showMessage('Task created');
+    }
+    clearTaskForm();
+    await loadTasks();
+  } catch (err) {
+    showMessage('Error saving task: '+err.message, 'error');
+  }
+});
+
+document.getElementById('task-clear').addEventListener('click', clearTaskForm);
+
+function clearTaskForm(){
+  document.getElementById('task-id').value='';
+  document.getElementById('task-title').value='';
+  document.getElementById('task-status').value='';
+  document.getElementById('task-assignedTo').value='';
+}
+
+async function editTask(id){
+  try {
+    const t = await request(`${TASK_API}/${id}`);
+    document.getElementById('task-id').value = t.id;
+    document.getElementById('task-title').value = t.title || '';
+    document.getElementById('task-status').value = t.status || '';
+    document.getElementById('task-assignedTo').value = t.assignedTo || '';
+    document.querySelector('.tab-btn[data-target="tasks-section"]').click();
+  } catch (err) {
+    showMessage('Error fetching task: '+err.message, 'error');
+  }
+}
+
+async function deleteTask(id){
+  if (!confirm('Delete task id='+id+' ?')) return;
+  try {
+    await request(`${TASK_API}/${id}`, {method:'DELETE'});
+    showMessage('Task deleted');
+    await loadTasks();
+  } catch (err) {
+    showMessage('Error deleting task: '+err.message, 'error');
+  }
+}
+
+// ---------------- Helpers: selectors ----------------
+function populateCustomerSelectors(customers){
+  const txSel = document.getElementById('transaction-customerId');
+  const itSel = document.getElementById('interaction-customerId');
+  [txSel, itSel].forEach(sel=>{
+    if (!sel) return;
+    sel.innerHTML = `<option value="">-- select customer --</option>`;
+    customers.forEach(c=>{
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.text = `${c.id} — ${c.name}`;
+      sel.appendChild(opt);
+    });
+  });
+}
+
+// ---------------- Initial load ----------------
+async function init(){
+  // default to customers tab
+  document.querySelector('.tab-btn[data-target="customers-section"]').click();
+  try {
+    await loadCustomers();
+    await loadTransactions();
+    await loadInteractions();
+    await loadTasks();
+  } catch (err) {
+    showMessage('Initial load error: '+err.message, 'error');
+  }
+}
+
+// run
+init();
