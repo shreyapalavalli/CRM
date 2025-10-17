@@ -1,5 +1,4 @@
-index.html
-
+src/main/resources/templates/index.html
 <!doctype html>
 <html lang="en">
 <head>
@@ -137,8 +136,7 @@ index.html
 </body>
 </html>
 
-
-style.css
+src/main/resources/static/css/style.css
 :root{
   --accent:#2b7a78;
   --muted:#666;
@@ -183,7 +181,7 @@ button.delete{background:#ffdede}
 .message.error{background:#ffe6e6;border:1px solid #ffbebe}
 footer{padding:12px;text-align:center;color:var(--muted);font-size:13px}
 
-script.js
+src/main/resources/static/js/script.js
 // ---------------- Config ----------------
 const API_BASE = "/api";
 const CUSTOMER_API = `${API_BASE}/customers`;
